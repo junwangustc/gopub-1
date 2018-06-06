@@ -2,29 +2,31 @@ package main
 
 import (
 	"fmt"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
-	"github.com/astaxie/beego/toolbox"
-	_ "github.com/go-sql-driver/mysql"
 	"library/p2p/init_sever"
-	"models"
 	"os"
 	"os/signal"
 	_ "routers"
 	"syscall"
+
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego/toolbox"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func initArgs() {
 	args := os.Args
 	for _, v := range args {
-		if v == "-syncdb" {
-			models.Syncdb()
-			os.Exit(0)
-		}
-		if v == "-docker" {
-			beego.BConfig.RunMode = "docker"
-			models.Syncdb()
-		}
+		/*
+			if v == "-syncdb" {
+				models.Syncdb()
+				os.Exit(0)
+			}
+			if v == "-docker" {
+				beego.BConfig.RunMode = "docker"
+				//models.Syncdb()
+			}
+		*/
 	}
 }
 
