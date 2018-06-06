@@ -15,19 +15,22 @@ import (
 )
 
 func initArgs() {
-	args := os.Args
-	for _, v := range args {
-		/*
-			if v == "-syncdb" {
-				models.Syncdb()
-				os.Exit(0)
-			}
-			if v == "-docker" {
-				beego.BConfig.RunMode = "docker"
-				//models.Syncdb()
-			}
-		*/
-	}
+
+	/*
+		args := os.Args
+		for _, v := range args {
+				if v == "-syncdb" {
+					models.Syncdb()
+					os.Exit(0)
+				}
+				if v == "-docker" {
+					beego.BConfig.RunMode = "docker"
+					//models.Syncdb()
+				}
+		}
+
+	*/
+	fmt.Println("init")
 }
 
 func init() {
