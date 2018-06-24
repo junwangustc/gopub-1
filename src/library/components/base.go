@@ -139,7 +139,7 @@ func (c *BaseComponents) copyFilesByP2p(id string, src string, dest string, host
 /**
  * 获取host
  */
-func (c *BaseComponents) GetHosts() ([]string, []string) {
+func (c *BaseComponents) GetHosts() []string {
 	hostsStr := c.project.Hosts
 	if c.task != nil && c.task.Hosts != "" {
 		hostsStr = c.task.Hosts
