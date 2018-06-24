@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"library/common"
 	"library/ssh"
-	"log"
 	"models"
 	"regexp"
 	"strings"
@@ -62,7 +61,6 @@ func (c *BaseComponents) runRemoteCommand(command string, hosts []string) ([]ssh
 		hosts = c.GetHosts()
 	}
 	beego.Info("-----2.runremoteCommand-----", hosts)
-	log.Info("-----2.1runremoteCommand-----", hosts)
 	id := c.SaveRecord(command)
 	start := time.Now()
 	createdAt := int(start.Unix())
@@ -81,7 +79,6 @@ func (c *BaseComponents) runRemoteCommand(command string, hosts []string) ([]ssh
 	}
 
 	beego.Info("-----2.runremoteCommand-over----", hosts)
-	log.Info("-----2.1runremoteCommand-over----", hosts)
 	c.SaveRecordRes(id, duration, createdAt, status, s)
 	return s, err
 
