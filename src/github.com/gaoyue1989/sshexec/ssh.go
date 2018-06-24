@@ -1,10 +1,11 @@
 package sshexec
 
-import ()
 import (
 	"errors"
+
 	"github.com/ivpusic/grpool"
 	"golang.org/x/crypto/ssh"
+
 	"io/ioutil"
 	"log"
 	"os"
@@ -71,6 +72,7 @@ func (s *SSHExecAgent) SshHostByKey(hosts []string, user string, cmd string) ([]
 	defer pool.Release()
 	pool.WaitCount(len(hosts))
 	for i, _ := range hosts {
+		log.Println("======3.执行第 %dssh任务%v ", i, hosts[i])
 		count := i
 		pool.JobQueue <- grpool.Job{
 			Jobid: count,

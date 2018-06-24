@@ -7,6 +7,8 @@ import (
 	"models"
 	"os"
 	"time"
+
+	"github.com/astaxie/beego"
 )
 
 type DetectionController struct {
@@ -59,11 +61,14 @@ func (c *DetectionController) Get() {
 		}
 	}
 	// 3.权限与免密码登录检测
+	beego.Info("-----------1.开始检测-----ssh")
 	err := s.TestSsh()
 	if err != nil {
 		c.SetJson(1, nil, "ssh目标机器错误"+err.Error())
 		return
 	}
+
+	beego.Info("-----------1.检测成功-----ssh")
 	// 4.检测用户是否具有目标机release目录读写权限
 	err = s.TestReleaseDir()
 	if err != nil {

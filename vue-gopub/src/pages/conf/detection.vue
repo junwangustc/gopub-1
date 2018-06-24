@@ -47,7 +47,7 @@
         })
           .then(({data: {data}}) => {
             this.$message({
-              message: "检测成功",
+              message: "检测成功!!!",
               type: 'success'
             })
           })

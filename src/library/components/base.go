@@ -3,14 +3,15 @@ package components
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/astaxie/beego"
-	"github.com/gaoyue1989/sshexec"
 	"library/common"
 	"library/ssh"
 	"models"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/astaxie/beego"
+	"github.com/gaoyue1989/sshexec"
 )
 
 const SSHTIMEOUT = 3600
@@ -59,6 +60,7 @@ func (c *BaseComponents) runRemoteCommand(command string, hosts []string) ([]ssh
 	if len(hosts) == 0 {
 		hosts = c.GetHosts()
 	}
+	beego.Infof("-----2.runremoteCommand-----%v", hosts)
 	id := c.SaveRecord(command)
 	start := time.Now()
 	createdAt := int(start.Unix())
@@ -75,6 +77,8 @@ func (c *BaseComponents) runRemoteCommand(command string, hosts []string) ([]ssh
 	if err != nil {
 		status = 0
 	}
+
+	beego.Infof("-----2.runremoteCommand-over----%v", hosts)
 	c.SaveRecordRes(id, duration, createdAt, status, s)
 	return s, err
 
@@ -135,7 +139,7 @@ func (c *BaseComponents) copyFilesByP2p(id string, src string, dest string, host
 /**
  * 获取host
  */
-func (c *BaseComponents) GetHosts() []string {
+func (c *BaseComponents) GetHosts() ([]string, []string) {
 	hostsStr := c.project.Hosts
 	if c.task != nil && c.task.Hosts != "" {
 		hostsStr = c.task.Hosts
@@ -149,6 +153,7 @@ func (c *BaseComponents) GetHosts() []string {
 		}
 
 	}
+
 	return res
 }
 
