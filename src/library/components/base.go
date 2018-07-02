@@ -187,8 +187,7 @@ func (c *BaseComponents) GetHostWithPort() ([]string, []int, error) {
 		if len(data) == 1 {
 			hosts = append(hosts, data[0])
 			ports = append(ports, 22)
-		}
-		if len(data) == 2 {
+		}else if len(data) == 2 {
 
 			hosts = append(hosts, data[0])
 			port, err := strconv.Atoi(data[1])
@@ -196,7 +195,7 @@ func (c *BaseComponents) GetHostWithPort() ([]string, []int, error) {
 				return hosts, ports, err
 			}
 			ports = append(ports, port)
-		}
+		}else 
 		return hosts, ports, errors.New("ip,port is invalid:" + v)
 	}
 	if len(hosts) != len(ports) {
