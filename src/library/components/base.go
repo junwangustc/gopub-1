@@ -188,7 +188,7 @@ func (c *BaseComponents) GetHostWithPort() ([]string, []int, error) {
 			hosts = append(hosts, data[0])
 			ports = append(ports, 22)
 		}
-		if len(data == 2) {
+		if len(data) == 2 {
 
 			hosts = append(hosts, data[0])
 			port, err := strconv.Atoi(data[1])
