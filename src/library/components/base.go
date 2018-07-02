@@ -64,7 +64,7 @@ func (c *BaseComponents) runRemoteCommand(command string) ([]sshexec.ExecResult,
 		return nil, err
 
 	}
-	beego.Info("-----2.runremoteCommand-----", hosts)
+	beego.Info("-----2.runremoteCommand-----", hosts, ports)
 	id := c.SaveRecord(command)
 	start := time.Now()
 	createdAt := int(start.Unix())
@@ -82,7 +82,7 @@ func (c *BaseComponents) runRemoteCommand(command string) ([]sshexec.ExecResult,
 		status = 0
 	}
 
-	beego.Info("-----2.runremoteCommand-over----", hosts)
+	beego.Info("-----2.runremoteCommand-over----", hosts, ports)
 	c.SaveRecordRes(id, duration, createdAt, status, s)
 	return s, err
 
