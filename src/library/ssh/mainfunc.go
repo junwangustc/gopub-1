@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/gaoyue1989/sshexec"
 	"library/p2p/init_sever"
 	"library/p2p/server"
 	"os/exec"
 	"path/filepath"
 	"time"
+
+	"github.com/gaoyue1989/sshexec"
 )
 
 func CommandLocal(cmd string, to int) (sshexec.ExecResult, error) {
@@ -59,7 +60,7 @@ func LocalExec(cmd string) sshexec.ExecResult {
 	}
 }
 
-func TransferByP2p(id string, hosts []string, user string, localFilePath string, remoteFilePath string, to int) ([]sshexec.ExecResult, error) {
+func TransferByP2p(id string, hosts []string, ports []int, user string, localFilePath string, remoteFilePath string, to int) ([]sshexec.ExecResult, error) {
 	returnResult := make([]sshexec.ExecResult, len(hosts))
 	timeout := time.After(time.Duration(to) * time.Second)
 	//创建传输任务
@@ -122,7 +123,7 @@ func TransferByP2p(id string, hosts []string, user string, localFilePath string,
 	}
 }
 
-func TransP2pReName(id string, hosts []string, user string, localFilePath string, remoteFilePath string, to int) error {
+func TransP2pReName(id string, hosts []string, ports []int, user string, localFilePath string, remoteFilePath string, to int) error {
 	fileName := filepath.Base(localFilePath)
 	filePath := init_sever.P2pSvc.Cfg.DownDir
 	oldFile := filePath + fileName
@@ -130,6 +131,6 @@ func TransP2pReName(id string, hosts []string, user string, localFilePath string
 	sshExecAgent := sshexec.SSHExecAgent{}
 	sshExecAgent.Worker = 10
 	sshExecAgent.TimeOut = 30 * time.Second
-	_, err := sshExecAgent.SshHostByKey(hosts, user, cmd)
+	_, err := sshExecAgent.SshHostByKey(hosts, ports, user, cmd)
 	return err
 }

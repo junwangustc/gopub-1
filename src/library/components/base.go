@@ -92,7 +92,7 @@ func (c *BaseComponents) runRemoteCommand(command string) ([]sshexec.ExecResult,
 /**
 * 执行远端传输文件
  */
-func (c *BaseComponents) copyFilesBySftp(src string, dest string, hosts []string) ([]sshexec.ExecResult, error) {
+func (c *BaseComponents) copyFilesBySftp(src string, dest string, hosts1 []string) ([]sshexec.ExecResult, error) {
 	hosts, ports, err = c.GetHostWithPort()
 	if err != nil {
 		return nil, err
@@ -125,14 +125,21 @@ func (c *BaseComponents) copyFilesBySftp(src string, dest string, hosts []string
 /**
 * 执行远端传输文件 p2p方式
  */
-func (c *BaseComponents) copyFilesByP2p(id string, src string, dest string, hosts []string) ([]sshexec.ExecResult, error) {
+func (c *BaseComponents) copyFilesByP2p(id string, src string, dest string, hosts1 []string) ([]sshexec.ExecResult, error) {
 	start := time.Now()
 	rid := c.SaveRecord("Transfer by p2p")
 	createdAt := int(start.Unix())
-	if len(hosts) == 0 {
-		hosts = c.GetHosts()
+	hosts, ports, err = c.GetHostWithPort()
+	if err != nil {
+		return nil, err
+
 	}
-	s, err := gopubssh.TransferByP2p(id, c.GetHosts(), c.project.ReleaseUser, src, dest, SSHREMOTETIMEOUT)
+
+	if len(hosts) == 0 || len(ports) == 0 {
+		return nil, errors.New("host or ports empty")
+	}
+
+	s, err := gopubssh.TransferByP2p(id, hosts, ports, c.project.ReleaseUser, src, dest, SSHREMOTETIMEOUT)
 	ss, _ := json.Marshal(s)
 	go c.LogTaskCommond(string(ss))
 	//获取执行时间
