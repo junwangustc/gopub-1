@@ -59,8 +59,7 @@ func (c *BaseComponents) runLocalCommand(command string) (sshexec.ExecResult, er
 * 执行远端目标机命令
  */
 func (c *BaseComponents) runRemoteCommand(command string) ([]sshexec.ExecResult, error) {
-	var err error
-	hosts, ports, err = c.GetHostWithPort()
+	hosts, ports, err := c.GetHostWithPort()
 	if err != nil {
 		return nil, err
 
@@ -93,7 +92,7 @@ func (c *BaseComponents) runRemoteCommand(command string) ([]sshexec.ExecResult,
 * 执行远端传输文件
  */
 func (c *BaseComponents) copyFilesBySftp(src string, dest string, hosts1 []string) ([]sshexec.ExecResult, error) {
-	hosts, ports, err = c.GetHostWithPort()
+	hosts, ports, err := c.GetHostWithPort()
 	if err != nil {
 		return nil, err
 
@@ -129,7 +128,7 @@ func (c *BaseComponents) copyFilesByP2p(id string, src string, dest string, host
 	start := time.Now()
 	rid := c.SaveRecord("Transfer by p2p")
 	createdAt := int(start.Unix())
-	hosts, ports, err = c.GetHostWithPort()
+	hosts, ports, err := c.GetHostWithPort()
 	if err != nil {
 		return nil, err
 
