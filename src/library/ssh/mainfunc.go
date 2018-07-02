@@ -94,7 +94,7 @@ func TransferByP2p(id string, hosts []string, ports []int, user string, localFil
 				e.Host = ip
 				returnResult = append(returnResult, e)
 			}
-			err := TransP2pReName(id, hosts, user, localFilePath, remoteFilePath, 30)
+			err := TransP2pReName(id, hosts, ports, user, localFilePath, remoteFilePath, 30)
 			return returnResult, err
 		} else {
 			for ip, DispatchInfo := range res.DispatchInfos {
