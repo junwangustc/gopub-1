@@ -48,11 +48,16 @@ func GetAuthKeys(keys []string) []ssh.AuthMethod {
 	}
 	return methods
 }
-func (s *SSHExecAgent) SshHostByKey(hosts []string, user string, cmd string) ([]ExecResult, error) {
+func (s *SSHExecAgent) SshHostByKey(hosts []string, ports []int, user string, cmd string) ([]ExecResult, error) {
 	if len(hosts) == 0 {
 		log.Println("no hosts")
 		return nil, errors.New("no hosts")
 	}
+	if len(ports) == 0 {
+		log.Println("no hosts ports")
+		return nil, errors.New("no hosts port")
+	}
+
 	if s.Worker == 0 {
 		s.Worker = 40
 	}
@@ -72,7 +77,7 @@ func (s *SSHExecAgent) SshHostByKey(hosts []string, user string, cmd string) ([]
 	defer pool.Release()
 	pool.WaitCount(len(hosts))
 	for i, _ := range hosts {
-		log.Println("======3.执行第 %dssh任务%v ", i, hosts[i])
+		log.Println("======3.执行第 %dssh任务%v ", i, hosts[i], ports[i])
 		count := i
 		pool.JobQueue <- grpool.Job{
 			Jobid: count,
@@ -81,7 +86,7 @@ func (s *SSHExecAgent) SshHostByKey(hosts []string, user string, cmd string) ([]
 					Username: user,
 					Password: "",
 					Hostname: hosts[count],
-					Port:     22,
+					Port:     ports[i],
 					Auths:    authKeys,
 				}
 				r := session.Exec(count, cmd, session.GenerateConfig())
@@ -118,11 +123,16 @@ func (s *SSHExecAgent) SshHostByKey(hosts []string, user string, cmd string) ([]
 
 }
 
-func (s *SSHExecAgent) SftpHostByKey(hosts []string, user string, localFilePath string, remoteFilePath string) ([]ExecResult, error) {
+func (s *SSHExecAgent) SftpHostByKey(hosts []string, ports []int, user string, localFilePath string, remoteFilePath string) ([]ExecResult, error) {
 	if len(hosts) == 0 {
 		log.Println("no hosts")
 		return nil, errors.New("no hosts")
 	}
+	if len(ports) == 0 {
+		log.Println("no hosts ports")
+		return nil, errors.New("no hosts ports")
+	}
+
 	if s.Worker == 0 {
 		s.Worker = 40
 	}
@@ -150,7 +160,7 @@ func (s *SSHExecAgent) SftpHostByKey(hosts []string, user string, localFilePath 
 					Username: user,
 					Password: "",
 					Hostname: hosts[count],
-					Port:     22,
+					Port:     ports[count],
 					Auths:    authKeys,
 				}
 				r := session.Transfer(count, localFilePath, remoteFilePath, session.GenerateConfig())

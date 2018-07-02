@@ -2,11 +2,13 @@ package components
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"library/common"
 	"library/ssh"
 	"models"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -56,9 +58,12 @@ func (c *BaseComponents) runLocalCommand(command string) (sshexec.ExecResult, er
 /**
 * 执行远端目标机命令
  */
-func (c *BaseComponents) runRemoteCommand(command string, hosts []string) ([]sshexec.ExecResult, error) {
-	if len(hosts) == 0 {
-		hosts = c.GetHosts()
+func (c *BaseComponents) runRemoteCommand(command string) ([]sshexec.ExecResult, error) {
+	var err error
+	hosts, ports, err = c.GetHostWithPort()
+	if err != nil {
+		return nil, err
+
 	}
 	beego.Info("-----2.runremoteCommand-----", hosts)
 	id := c.SaveRecord(command)
@@ -67,7 +72,7 @@ func (c *BaseComponents) runRemoteCommand(command string, hosts []string) ([]ssh
 	sshExecAgent := sshexec.SSHExecAgent{}
 	sshExecAgent.Worker = SSHWorker
 	sshExecAgent.TimeOut = time.Duration(SSHREMOTETIMEOUT) * time.Second
-	s, err := sshExecAgent.SshHostByKey(hosts, c.project.ReleaseUser, command)
+	s, err := sshExecAgent.SshHostByKey(hosts, ports, c.project.ReleaseUser, command)
 	ss, _ := json.Marshal(s)
 	go c.LogTaskCommond(string(ss))
 	//获取执行时间
@@ -88,8 +93,14 @@ func (c *BaseComponents) runRemoteCommand(command string, hosts []string) ([]ssh
 * 执行远端传输文件
  */
 func (c *BaseComponents) copyFilesBySftp(src string, dest string, hosts []string) ([]sshexec.ExecResult, error) {
-	if len(hosts) == 0 {
-		hosts = c.GetHosts()
+	hosts, ports, err = c.GetHostWithPort()
+	if err != nil {
+		return nil, err
+
+	}
+
+	if len(hosts) == 0 || len(ports) == 0 {
+		return nil, errors.New("host or ports empty")
 	}
 	id := c.SaveRecord("Transfer")
 	start := time.Now()
@@ -97,7 +108,7 @@ func (c *BaseComponents) copyFilesBySftp(src string, dest string, hosts []string
 	sshExecAgent := sshexec.SSHExecAgent{}
 	sshExecAgent.Worker = SSHWorker
 	sshExecAgent.TimeOut = time.Duration(SSHREMOTETIMEOUT) * time.Second
-	s, err := sshExecAgent.SftpHostByKey(hosts, c.project.ReleaseUser, src, dest)
+	s, err := sshExecAgent.SftpHostByKey(hosts, ports, c.project.ReleaseUser, src, dest)
 	ss, _ := json.Marshal(s)
 	go c.LogTaskCommond(string(ss))
 	//获取执行时间
@@ -153,8 +164,40 @@ func (c *BaseComponents) GetHosts() []string {
 		}
 
 	}
-
 	return res
+}
+
+//获取host 和port
+func (c *BaseComponents) GetHostWithPort() ([]string, []int, error) {
+	hostsStr := c.project.Hosts
+	if c.task != nil && c.task.Hosts != "" {
+		hostsStr = c.task.Hosts
+	}
+	hostWithPort := strings.Split(hostsStr, "\n")
+	hosts := make([]string, 0)
+	ports := make([]int, 0)
+	for _, v := range hostWithPort {
+		data := strings.Split(v, ":")
+		if len(data) == 1 {
+			hosts = append(hosts, data[0])
+			ports = append(ports, 22)
+		}
+		if len(data == 2) {
+
+			hosts = append(hosts, data[0])
+			port, err := strconv.Atoi(data[1])
+			if err != nil {
+				return hosts, ports, err
+			}
+			ports = append(ports, port)
+		}
+		return hosts, ports, errors.New("ip,port is invalid:" + v)
+	}
+	if len(hosts) != len(ports) {
+		return hosts, ports, errors.New("hostsData is invalid:" + hostsStr)
+	}
+	return hosts, ports, nil
+
 }
 
 /**
