@@ -3,6 +3,7 @@ package sshexec
 import (
 	"errors"
 
+	"github.com/astaxie/beego"
 	"github.com/ivpusic/grpool"
 	"golang.org/x/crypto/ssh"
 
@@ -78,6 +79,7 @@ func (s *SSHExecAgent) SshHostByKey(hosts []string, ports []int, user string, cm
 	pool.WaitCount(len(hosts))
 	for i, _ := range hosts {
 		log.Println("======3.执行第 %dssh任务%v ", i, hosts[i], ports[i])
+		beego.Info("======3.1执行第 %dssh任务%v ", i, hosts[i], ports[i])
 		count := i
 		pool.JobQueue <- grpool.Job{
 			Jobid: count,
@@ -86,7 +88,7 @@ func (s *SSHExecAgent) SshHostByKey(hosts []string, ports []int, user string, cm
 					Username: user,
 					Password: "",
 					Hostname: hosts[count],
-					Port:     ports[i],
+					Port:     ports[count],
 					Auths:    authKeys,
 				}
 				r := session.Exec(count, cmd, session.GenerateConfig())
