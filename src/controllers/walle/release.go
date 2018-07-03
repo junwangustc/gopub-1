@@ -2,12 +2,14 @@ package wallecontrollers
 
 import (
 	"controllers"
-	"github.com/astaxie/beego/orm"
 	"library/common"
 	"library/components"
 	"models"
 	"strings"
 	"time"
+
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 )
 
 type ReleaseController struct {
@@ -114,12 +116,15 @@ func (c *ReleaseController) releaseHandling() error {
 		c.failHandling(&s)
 		return err
 	}
+	beego.Info("上线---InitLocalWorkSpace")
 	err = s.InitRemoteVersion(c.Task.LinkId)
 	c.updateRecord(10)
 	if err != nil {
 		c.failHandling(&s)
 		return err
 	}
+
+	beego.Info("上线---InitRemoteVersion")
 	err = s.PreDeploy(c.Task.LinkId)
 	c.updateRecord(20)
 	if err != nil {
@@ -146,12 +151,15 @@ func (c *ReleaseController) releaseHandling() error {
 		}
 	}
 
+	beego.Info("上线---PreDeploy")
 	err = s.PostDeploy(c.Task.LinkId)
 	c.updateRecord(40)
 	if err != nil {
 		c.failHandling(&s)
 		return err
 	}
+
+	beego.Info("上线---PostDeploy")
 	err = s.CopyFiles()
 	c.updateRecord(50)
 	if err != nil {
@@ -164,6 +172,8 @@ func (c *ReleaseController) releaseHandling() error {
 		c.failHandling(&s)
 		return err
 	}
+
+	beego.Info("上线---CopyFile")
 	//这里实际发布已完成 (后置本地脚本任务,)
 	err = s.LastDeploy(c.Task.LinkId)
 	if err != nil {
