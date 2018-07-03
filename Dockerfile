@@ -40,5 +40,4 @@ COPY --from=golang /data/gopub/src/logs /data/gopub/src/logs
 COPY --from=golang /data/gopub/src/agent /data/gopub/src/agent
 COPY --from=node /data/gopub/src/views /data/gopub/src/views
 COPY --from=node /data/gopub/src/static /data/gopub/src/static
-RUN makedir -p /data/simu/filedir
 CMD ["./control","rundocker"]
