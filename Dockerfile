@@ -29,6 +29,8 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositorie
     rm -rf /var/cache/apk/*   /tmp/*  && \
     mkdir -p /data/htdocs && \
     mkdir -p /data/logs && \
+    mkdir -p /data/simu/filedir && \
+    mkdir -p /data/prod/filedir && \
     ssh-keygen -q -N "" -f /root/.ssh/id_rsa && \
     #输出的key需要加入发布目标机的 ~/.ssh/authorized_keys
     cat ~/.ssh/id_rsa.pub
