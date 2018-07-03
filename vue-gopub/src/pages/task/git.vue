@@ -122,7 +122,7 @@
               .then(({data: {data}}) => {
                 this.ProjectData = data
                 this.Hosts=[]
-                var ss=this.ProjectData.Hosts.match(/(\d+)\.(\d+)\.(\d+)\.(\d+)/g)
+                var ss=this.ProjectData.Hosts.match(/(\d+)\.(\d+)\.(\d+)\.(\d+)(\:)(\d*)/g)
                 for(var i=0;i<ss.length;i++){
                   this.Hosts.push({label:  ss[i], value:  ss[i]})
                 }
@@ -194,7 +194,7 @@
                 this.on_submit_loading = true
                   if(this.isShowHost){
                       this.form.Title=this.form.Title+"-灰度"
-                      this.form.Hosts=this.selectHosts.toString()
+                      this.form.Hosts=this.selectHosts.join("\n")
                   }
                 this.$http.post(port_task.save, this.form)
                         .then(({data: {data}}) => {
